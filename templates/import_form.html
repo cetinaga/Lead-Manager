@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Import</title>
+  <style>
+    body{font-family:system-ui,Arial}
+    .wrap{max-width:800px;margin:40px auto}
+    .card{border:1px solid #ccc;padding:16px;border-radius:8px;background:#fff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>PDF Import</h1>
+    <div class="card">
+      <form action="/import" method="post" enctype="multipart/form-data">
+        <p><input type="file" name="pdf" accept=".pdf" required></p>
+        <p><button type="submit">Import starten</button></p>
+      </form>
+      <p style="color:#666">Hinweis: Erfordert <code>pdftotext</code> (Poppler).</p>
+      <p><a href="/">Zurück</a></p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lead Management</title>
+  <style>
+    :root {
+      --primary:#0EA5E9; --primary-600:#0284C7;
+      --text:#0F172A; --subtle:#64748B; --bg:#F8FAFC; --card:#FFFFFF; --border:#E2E8F0;
+      --radius:12px; --shadow:0 6px 24px rgba(2,8,23,.06), 0 1px 2px rgba(2,8,23,.04);
+      --green:#22C55E;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:var(--bg);color:var(--text)}
+    .container{max-width:1600px;margin:0 auto;padding:24px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;box-shadow:var(--shadow)}
+    h1{margin:0 0 10px;font-size:26px}
+    h2{margin:0 0 10px;font-size:18px;color:var(--subtle)}
+    a{color:var(--primary-600);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+    .btn{padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-weight:600;color:var(--text)}
+    .btn-compact{padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;color:var(--text);font-weight:600;font-size:14px;line-height:1}
+
+    .statusbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .pills{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:700;font-size:13px}
+    .pill.active{border-color:var(--primary-600);color:var(--primary-600);box-shadow:0 0 0 2px rgba(2,132,199,.15) inset}
+    .wa-menu-wrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+    #waMenu.select{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;width:auto;max-width:max-content}
+
+    .searchrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .input{padding:10px 12px;border:1px solid var(--border);border-radius:10px;min-width:280px;outline:none}
+
+    /* Dropzone schlanker */
+    .upload-wrap{margin-left:auto}
+    #dropzone{
+      display:inline-flex;align-items:center;gap:12px;
+      border:1px dashed #93C5FD;
+      background:linear-gradient(180deg,#FFFFFF 0%,#F0F9FF 100%);
+      border-radius:12px;
+      padding:10px 12px;              /* niedriger */
+      color:#0369A1;cursor:pointer;
+      box-shadow:0 10px 20px rgba(3,105,161,.12);
+      min-width:380px; min-height:56px; /* niedriger */
+      font-size:14px;
+    }
+    #dropzone.dragover{background:#E0F2FE}
+    #fileInput{display:none}
+
+    table{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:8px;table-layout:fixed}
+
+    /* === KORREKTUR: Spaltenbreiten angepasst === */
+    colgroup col:nth-child(1){width:3%}
+    colgroup col:nth-child(2){width:4%}
+    colgroup col:nth-child(3){width:6%}
+    colgroup col:nth-child(4){width:20%}
+    colgroup col:nth-child(5){width:22%}
+    colgroup col:nth-child(6){width:34%}  /* Notizen - schmaler gemacht */
+    colgroup col:nth-child(7){width:6%}
+    colgroup col:nth-child(8){width:9%}   /* Aktionen - breiter gemacht */
+
+    th{font-size:12px;color:var(--subtle);text-transform:uppercase;letter-spacing:.5px;padding:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    th.actions{padding-right:10px}
+    td{background:var(--card);border:1px solid var(--border);border-left:none;border-right:none;padding:10px 12px;vertical-align:top;overflow:hidden}
+    tbody tr{box-shadow:var(--shadow);border-radius:12px}
+    tbody td:first-child{border-left:1px solid var(--border);border-top-left-radius:12px;border-bottom-left-radius:12px}
+    tbody td:last-child{border-right:1px solid var(--border);border-top-right-radius:12px;border-bottom-right-radius:12px}
+    .actions-cell{padding-right:10px;padding-left:12px}
+    .actions-bar{display:flex;gap:8px;justify-content:flex-start;align-items:center;flex-wrap:wrap}
+    .small{font-size:12px;color:var(--subtle)}
+    .nowrap{white-space:nowrap}
+
+    select, textarea { width: 100% }
+    select.status-select{padding:8px;border:1px solid var(--border);border-radius:10px;max-width:140px}
+    select.anrede-select{padding:6px;border:1px solid var(--border);border-radius:10px;max-width:100px;width:100%}
+
+    .note-wrap{position:relative}
+    .note-wrap textarea{
+      min-height:140px;padding:12px 56px 12px 12px;
+      border:1px solid var(--border);border-radius:12px;resize:vertical;scrollbar-gutter:stable;
+    }
+    .note-save{
+      position:absolute;top:8px;right:10px;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);
+      display:inline-flex;align-items:center;justify-content:center;background:#fff;cursor:pointer
+    }
+    .note-save:hover{box-shadow:0 0 0 2px rgba(2,132,199,.15) inset}
+
+    .btn.action{display:inline-flex;align-items:center;justify-content:center;min-width:110px;height:40px}
+    .btn.call{background:var(--green);color:#fff;border-color:var(--green)}
+    .btn.email{background:#0EA5E9;color:#fff;border-color:#0EA5E9}
+    .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border);border-radius:10px;background:#fff}
+    .icon{width:18px;height:18px;display:block}
+
+    .mini-actions{display:flex;gap:10px;margin-top:6px}
+    .contact-links{margin-top:6px}
+
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,8,23,.45);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal{width:min(900px,95vw);max-height:85vh;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:12px 12px 16px}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 8px}
+    .close-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
+    .list{margin:10px 0;display:flex;flex-direction:column;gap:8px}
+    .row{display:flex;gap:8px}
+    .row textarea{height:80px;resize:vertical}
+    .grow{flex:1}
+
+    #toast{position:fixed;right:16px;bottom:16px;z-index:100;background:#0EA5E9;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);font-weight:700;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .18s, transform .18s}
+    #toast.show{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="toolbar">
+      <h1>Lead Management</h1>
+
+      <div class="upload-wrap" style="margin-left:auto">
+        <div id="dropzone" title="PDF ablegen oder klicken">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l4 4h-3v6h-2V7H8l4-4z"/></svg>
+          <span class="small"><strong>PDF importieren</strong> – Dateien hierher ziehen</span>
+        </div>
+        <input id="fileInput" type="file" accept=".pdf" multiple>
+      </div>
+    </div>
+
+    <div class="statusbar" style="margin-top:10px">
+      {% set s = current_status or '' %}
+      <div class="pills">
+        {% macro pill(label, value, count) -%}
+          <a class="pill {% if (s==value) or (value=='' and not s) %}active{% endif %}" href="/{% if value %}?status={{ value | urlencode }}{% endif %}">{{ label }} <span class="small">({{ count }})</span></a>
+        {%- endmacro %}
+        {{ pill('Alle', '', counts.total) }}
+        {{ pill('Neu', 'neu', counts.get('neu',0)) }}
+        {{ pill('Nicht erreicht', 'nicht erreicht', counts.get('nicht erreicht',0)) }}
+        {{ pill('Termin', 'Termin', counts.get('Termin',0)) }}
+        {{ pill('RiVo', 'RiVo', counts.get('RiVo',0)) }}
+        {{ pill('In Bearbeitung', 'in Bearbeitung', counts.get('in Bearbeitung',0)) }}
+        {{ pill('Abgelegt', 'Abgelegt', counts.get('Abgelegt',0)) }}
+      </div>
+
+      <div class="wa-menu-wrap">
+        <select id="waMenu" class="select" title="WhatsApp & Vorlagen"></select>
+        <button type="button" class="btn" id="btnManageTpl" title="Vorlagen verwalten">⚙️</button>
+      </div>
+    </div>
+
+    <form class="searchrow" action="/" method="get">
+      {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+      <input class="input" type="text" name="q" value="{{ search_term }}" placeholder="Suche… (Name, E-Mail, Telefon, Adresse, Notizen)">
+      <button class="btn-compact" type="submit">Suchen</button>
+      <a class="btn-compact" href="/">Reset</a>
+    </form>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px">
+      <h2>Leads</h2>
+      <div class="bulk-actions" style="margin-left:auto">
+        <button class="btn" type="button" onclick="bulkDelete()">Ausgewählte löschen</button>
+      </div>
+    </div>
+
+    {% if leads %}
+    <table>
+      <colgroup><col><col><col><col><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+          <th class="nowrap">#</th>
+          <th>Anrede</th>
+          <th>Name &amp; Geburtstag</th>
+          <th>Kontakt</th>
+          <th>Notizen</th>
+          <th>Status</th>
+          <th class="actions">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for lead in leads %}
+        {% set wa_digits = (lead.telefon or '')|replace(' ','')|replace('+','')|replace('-','') %}
+        {% set full_name = ((lead.vorname or '') ~ ' ' ~ (lead.nachname or ''))|trim %}
+        {% set calendly_base = 'https://calendly.com/ckir-onlinemakler24/teams-meeting-60-minuten' %}
+        {% set calendly_url = calendly_base ~ '?name=' ~ (full_name|urlencode) ~ '&email=' ~ ((lead.email or '')|urlencode) %}
+
+        <tr>
+          <td><input type="checkbox" class="row-select" value="{{ lead.id }}"></td>
+          <td class="small nowrap">{{ loop.index }}</td>
+
+          <td>
+            <form action="/leads/{{ lead.id }}/update_anrede" method="post">
+              <input type="hidden" name="redirect_url" value="{{ request.url }}">
+              <select class="anrede-select" name="anrede" onchange="this.form.submit()">
+                <option value="-" {% if lead.anrede == '-' %}selected{% endif %}>-</option>
+                <option value="Herr" {% if lead.anrede == 'Herr' %}selected{% endif %}>Herr</option>
+                <option value="Frau" {% if lead.anrede == 'Frau' %}selected{% endif %}>Frau</option>
+              </select>
+            </form>
+          </td>
+
+          <td>
+            <strong>{{ lead.vorname or '' }} {{ lead.nachname or '' }}</strong><br>
+            <span class="small">
+              {{ lead.geburtstag or 'N/A' }}{% if lead.age %} ({{ lead.age }}){% endif %}
+            </span>
+            {% if lead.strasse or lead.plz or lead.stadt %}
+              <br><span class="small">{{ lead.strasse or '' }}{% if lead.strasse and (lead.plz or lead.stadt) %}, {% endif %}{{ lead.plz or '' }} {{ lead.stadt or '' }}</span>
+            {% endif %}
+          </td>
+
+          <td>
+            <div style="display:flex;gap:10px;margin-bottom:6px">
+              {% if lead.telefon %}
+                <a class="btn action call" href="#" onclick="dialAndLog(event, {{ lead.id }}, '{{ lead.telefon }}')" title="Anrufen">Anruf</a>
+              {% endif %}
+              <form action="/leads/{{ lead.id }}/notify/email" method="post" style="display:inline;">
+                <input type="hidden" name="redirect_url" value="{{ request.url }}">
+                <button type="submit" class="btn action email">E-Mail</button>
+              </form>
+            </div>
+
+            <div class="mini-actions">
+              {% if lead.telefon %}
+              <a class="iconbtn wa-link"
+                  href="#"
+                  data-phone="{{ wa_digits }}"
+                  data-anrede="{{ lead.anrede or '' }}"
+                  data-vorname="{{ lead.vorname or '' }}"
+                  data-nachname="{{ lead.nachname or '' }}"
+                  data-name="{{ full_name }}"
+                  data-email="{{ lead.email or '' }}"
+                  data-telefon="{{ lead.telefon or '' }}"
+                  data-termin="{{ calendly_url }}"
+                  title="WhatsApp">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M20.52 3.48A11.94 11.94 0 0012 .5C5.73.5.95 5.28.95 11.55c0 2.03.53 3.97 1.54 5.7L.5 23.5l6.41-1.96a11.05 11.05 0 005.09 1.27h.05c6.27 0 11.05-4.78 11.05-11.05 0-2.96-1.15-5.74-3.58-7.78zM12.05 21a9.2 9.2 0 01-4.7-1.3l-.34-.2-3.8 1.16 1.15-3.7-.22-.38a9.5 9.5 0 01-1.4-4.99C2.74 6.3 7.06 2 12.5 2c2.5 0 4.84.97 6.6 2.74A9.27 9.27 0 0121 11.95C21 17.4 16.7 21 12.05 21zm5.2-6.74c-.28-.14-1.66-.82-1.92-.91-.26-.1-.45-.14-.64.14-.19.27-.73.9-.9 1.08-.17.19-.33.21-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.4-1.65-1.56-1.93-.16-.27-.02-.42.12-.56.12-.12.27-.31.4-.47.13-.16.17-.27.26-.46.08-.19.04-.35-.02-.49-.07-.14-.64-1.52-.88-2.1-.23-.56-.47-.49-.64-.49h-.55c-.19 0-.49.07-.75.35-.26.28-1 1-1 2.43 0 1.43 1.03 2.81 1.18 3 .14.19 2.03 3.08 4.9 4.32.68.29 1.21.46 1.62.59.68.22 1.3.19 1.79.12.55-.08 1.66-.68 1.9-1.33.24-.65.24-1.21.17-1.33-.07-.12-.25-.19-.53-.33z"/>
+                </svg>
+              </a>
+              {% endif %}
+              <a class="iconbtn" href="{{ calendly_url }}" title="Calendly" target="_blank" rel="noreferrer">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 112 0v1zm13 7H4v9a1 1 0 001 1h14a1 1 0 001-1V9zM4 7h16V6H4v1z"/>
+                </svg>
+              </a>
+            </div>
+
+            <div class="small contact-links">
+              {% if lead.email %}<a href="mailto:{{ lead.email }}">✉ {{ lead.email }}</a>{% else %}-{% endif %}<br>
+              {% if lead.telefon %}<a id="tel-{{ lead.id }}" href="tel:{{ lead.telefon }}">☎ {{ lead.telefon }}</a>{% endif %}
+            </div>
+          </td>
+
+          <td>
+            <form action="/leads/{{ lead.id }}/update_note" method="post" class="note-wrap">
+              <input type="hidden" name="redirect_url" value="{{ request.url }}">
+              <textarea id="notes-{{ lead.id }}" name="notes" placeholder="Notizen … (alle Protokolle hier)">{{ lead.notes or '' }}</textarea>
+              <button type="submit" class="note-save" title="Speichern">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zM7 5h8v4H7V5zm12 14H5V11h14v8z"/></svg>
+              </button>
+            </form>
+          </td>
+
+          <td>
+            <form action="/leads/{{ lead.id }}/update_status" method="post">
+              <input type="hidden" name="redirect_url" value="{{ request.url }}">
+              <select class="status-select" name="status" onchange="onStatusChange(this)">
+                <option value="neu" {% if lead.status == 'neu' %}selected{% endif %}>Neu</option>
+                <option value="nicht erreicht" {% if lead.status == 'nicht erreicht' %}selected{% endif %}>Nicht erreicht</option>
+                <option value="Termin" {% if lead.status == 'Termin' %}selected{% endif %}>Termin</option>
+                <option value="RiVo" {% if lead.status == 'RiVo' %}selected{% endif %}>RiVo</option>
+                <option value="in Bearbeitung" {% if lead.status == 'in Bearbeitung' %}selected{% endif %}>In Bearbeitung</option>
+                <option value="Abgelegt" {% if lead.status == 'Abgelegt' or lead.status == 'abgeschlossen' %}selected{% endif %}>Abgelegt</option>
+              </select>
+            </form>
+          </td>
+
+          <td class="actions-cell">
+            <div class="actions-bar">
+              <button class="btn" style="min-width:110px;height:38px" type="button" onclick="openEdit({{ lead.id }})">Bearbeiten</button>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="small">Keine Leads gefunden.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div id="toast">Vorlage kopiert</div>
+
+<div id="modalBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <strong>Lead bearbeiten</strong>
+      <button class="close-btn" type="button" onclick="closeModal()">Schließen</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="tplBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <strong>WhatsApp-Vorlagen</strong>
+      <button class="close-btn" type="button" onclick="closeTpl()">Schließen</button>
+    </div>
+    <div>
+      <p class="small">Platzhalter: {Anrede}, {Vorname}, {Nachname}, {Name}, {Email}, {Telefon}, {TerminLink}</p>
+      <div id="tplList" class="list"></div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn" type="button" onclick="addTpl()">Vorlage hinzufügen</button>
+        <button class="btn" type="button" onclick="saveTpls()">Speichern</button>
+        <button class="btn" type="button" onclick="resetTpls()">Auf Standard setzen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ======= PDF Upload ======= */
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  function uploadFiles(files) {
+    const fd = new FormData();
+    Array.from(files).forEach(f => fd.append('files', f));
+    fetch('/upload', { method: 'POST', body: fd })
+      .then(async (r) => {
+        let data;
+        try { data = await r.json(); } catch (_) { data = { error: 'Antwort nicht lesbar' }; }
+        if (!r.ok) throw new Error((data && (data.error || (data.errors && data.errors.join('; ')))) || ('HTTP '+r.status));
+        return data;
+      })
+      .then(data => {
+        let txt = `Import: ${data.created} neu, ${data.updated_or_existing} aktualisiert`;
+        if (data.errors && data.errors.length) txt += ` – ${data.errors.length} Hinweis(e): ${data.errors[0]}`;
+        dropzone.querySelector('span').textContent = txt;
+        setTimeout(() => location.reload(), 1000);
+      })
+      .catch(err => {
+        dropzone.querySelector('span').textContent = 'Import fehlgeschlagen: ' + err.message;
+      });
+  }
+  if (dropzone) {
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files?.length) uploadFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', (e) => { if (e.target.files?.length) uploadFiles(e.target.files); });
+  }
+
+  function onStatusChange(sel) {
+    const form = sel.form;
+    const newStatus = sel.value;
+    form.querySelector('input[name="redirect_url"]').value = '/?status=' + encodeURIComponent(newStatus);
+    form.submit();
+  }
+
+  const modal = document.getElementById('modalBackdrop');
+  const modalBody = document.getElementById('modalBody');
+  function openEdit(leadId) {
+    fetch(`/leads/${leadId}/edit`)
+      .then(r => r.text())
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const form = doc.querySelector('form#edit-form');
+        modalBody.innerHTML = '';
+        if (form) {
+          const wrapper = document.createElement('div');
+          wrapper.appendChild(form);
+          modalBody.appendChild(wrapper);
+          form.addEventListener('submit', function(ev) {
+            ev.preventDefault();
+            const fd = new FormData(form);
+            fetch(form.action, { method: 'POST', body: fd })
+              .then(r => r.json())
+              .then(data => { if (data && data.ok) { closeModal(); location.reload(); } });
+          });
+        } else {
+          modalBody.textContent = 'Formular konnte nicht geladen werden.';
+        }
+        modal.style.display = 'flex';
+      });
+  }
+  function closeModal() { modal.style.display = 'none'; modalBody.innerHTML = ''; }
+
+  function toggleSelectAll(master) { document.querySelectorAll('.row-select').forEach(cb => { cb.checked = master.checked; }); }
+  function bulkDelete() {
+    const ids = Array.from(document.querySelectorAll('.row-select:checked')).map(cb => cb.value);
+    if (!ids.length) return;
+    if (!confirm(`Wirklich ${ids.length} Lead(s) löschen?`)) return;
+    const params = new URLSearchParams();
+    ids.forEach(id => params.append('selected', id));
+    params.append('redirect_url', window.location.href);
+    fetch('/leads/bulk_delete', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() })
+      .then(() => location.reload());
+  }
+
+  function dialAndLog(e, leadId, tel) {
+    e.preventDefault();
+    fetch(`/leads/${leadId}/log_call`, { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.ok) {
+          const ta = document.getElementById(`notes-${leadId}`);
+          if (ta) {
+            const prefix = ta.value.trim() ? '\n' : '';
+            ta.value = ta.value + prefix + data.note;
+          }
+        }
+      })
+      .finally(() => { window.location.href = `tel:${tel}`; });
+  }
+
+  /* WhatsApp/Vorlagen Dropdown – bleibt auf letzter Auswahl */
+  const TPL_KEY = 'waTemplates_v1';
+  const TPL_IDX_KEY = 'waTplIdx_v1';
+  const MODE_KEY = 'waMode_v1';
+  const MENU_SEL_KEY = 'waMenuSel_v1';
+
+  function defaultTemplates(){
+    return [{name:'PKV Erstkontakt', text:'Hallo {Anrede},\n\nvielen Dank für Ihr Interesse an einem kostenlosen und unverbindlichen Vergleich zur privaten Krankenversicherung für Beamte und Beamtenanwärter.\n\nFür einen individuellen Marktvergleich benötige ich noch weitere Angaben. Wann passt Ihnen ein kurzer Anruf am besten?\n\nAlternativ können Sie einen passenden Termin in meinem Kalender finden und direkt eintragen.\n\n👉🏼 Termin buchen: {TerminLink}\n\nMit freundlichen Grüßen\nCetin Kir\n\nWbV Onlinemakler GmbH – Exklusivpartner des Beamten-Infoportal.de'}];
+  }
+  function loadTpls(){
+    try{
+      const raw = localStorage.getItem(TPL_KEY);
+      if (!raw) return defaultTemplates();
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) && arr.length ? arr : defaultTemplates();
+    }catch(e){ return defaultTemplates(); }
+  }
+  function ensureDefaults(){
+    if (!localStorage.getItem(MODE_KEY)) localStorage.setItem(MODE_KEY,'app');
+    if (localStorage.getItem(TPL_IDX_KEY) === null) localStorage.setItem(TPL_IDX_KEY,'0');
+    if (!localStorage.getItem(MENU_SEL_KEY)) localStorage.setItem(MENU_SEL_KEY,'__mode_app');
+  }
+  function populateWaMenu(){
+    const menu = document.getElementById('waMenu');
+    const tpls = loadTpls();
+    let savedSel = localStorage.getItem(MENU_SEL_KEY) || '__mode_app';
+    let savedTplIdx = parseInt(localStorage.getItem(TPL_IDX_KEY) || '0',10);
+    if (isNaN(savedTplIdx) || savedTplIdx<0 || savedTplIdx>=tpls.length) savedTplIdx=0;
+
+    const opts = [];
+    opts.push(`<option value="__mode_app">WhatsApp: App (Desktop)</option>`);
+    opts.push(`<option value="__mode_web">WhatsApp: Web (Browser)</option>`);
+    opts.push(`<option value="tpl:${savedTplIdx}">${tpls[savedTplIdx].name}</option>`);
+    menu.innerHTML = opts.join('');
+
+    // Auswahl bestehen lassen:
+    const wanted = savedSel.startsWith('tpl:') ? `tpl:${savedTplIdx}` : savedSel;
+    Array.from(menu.options).forEach(o => o.selected = (o.value === wanted));
+
+    menu.onchange = () => {
+      const val = menu.value;
+      localStorage.setItem(MENU_SEL_KEY, val);
+      if (val === '__mode_app'){ localStorage.setItem(MODE_KEY,'app'); return; }
+      if (val === '__mode_web'){ localStorage.setItem(MODE_KEY,'web'); return; }
+      if (val.startsWith('tpl:')){
+        const idx = parseInt(val.split(':')[1],10);
+        localStorage.setItem(TPL_IDX_KEY, String(idx));
+      }
+    };
+  }
+
+  let toastTimer = null;
+  function showToast(msg='Vorlage kopiert'){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 1400);
+  }
+
+  let __waWin = null;
+  function openWhatsAppWeb(phone, text){
+    const webUrl = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`;
+    if (__waWin && !__waWin.closed) {
+      try { __waWin.location.replace(webUrl); __waWin.focus(); return; } catch (_) {}
+    }
+    __waWin = window.open(webUrl, 'wa_bridge');
+    if (!__waWin) window.location.assign(webUrl);
+  }
+
+  async function openWhatsAppApp(phone, text){
+    try { await navigator.clipboard.writeText(text); } catch(e) {}
+    const appUrl = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(text)}`;
+    let pop = window.open('', 'wa_app_launcher', 'width=100,height=80');
+    if (!pop) { window.location.href = appUrl; return; }
+    try { pop.location = appUrl; } catch(e) {}
+    setTimeout(()=>{ try{ pop.close(); }catch(e){} }, 1200);
+  }
+
+  function isMobile(){ return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+
+  function renderTpl(text, ctx){
+    const map = {
+      '{ANREDE}': ctx.anrede || '',
+      '{VORNAME}': ctx.vorname || '',
+      '{NACHNAME}': ctx.nachname || '',
+      '{NAME}': ctx.name || `${ctx.vorname||''} ${ctx.nachname||''}`.trim(),
+      '{EMAIL}': ctx.email || '',
+      '{TELEFON}': ctx.telefon || '',
+      '{TERMINLINK}': ctx.termin || ''
+    };
+    let out = text || '';
+    Object.keys(map).forEach(k=>{
+      const re = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+      out = out.replace(re, map[k]);
+    });
+    return out;
+  }
+
+  function setupWaLinks(){
+    document.querySelectorAll('.wa-link').forEach(el=>{
+      el.addEventListener('click', async (e)=>{
+        e.preventDefault();
+
+        const tpls = loadTpls();
+        let idx = parseInt(localStorage.getItem(TPL_IDX_KEY) || '0', 10);
+        if (isNaN(idx) || idx < 0 || idx >= tpls.length) idx = 0;
+        const tpl = tpls[idx];
+
+        const ctx = {
+          anrede:  el.dataset.anrede  || '',
+          vorname: el.dataset.vorname || '',
+          nachname:el.dataset.nachname|| '',
+          name:    el.dataset.name    || '',
+          email:   el.dataset.email   || '',
+          telefon: el.dataset.telefon || '',
+          termin:  el.dataset.termin  || ''
+        };
+        const phone = (el.dataset.phone||'').replace(/[^\d]/g,'');
+        if(!phone){ alert('Keine gültige Telefonnummer für WhatsApp.'); return; }
+
+        const text = renderTpl(tpl.text, ctx).replace(/\n/g, '\r\n');
+
+        try { await navigator.clipboard.writeText(text); } catch(e) {}
+        showToast('Vorlage kopiert');
+
+        if (isMobile()){
+          const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+          window.location.assign(waUrl);
+          return;
+        }
+        const mode = localStorage.getItem('waMode_v1') || 'app';
+        if (mode === 'web'){ openWhatsAppWeb(phone, text); }
+        else { openWhatsAppApp(phone, text); }
+      }, {passive:false});
+    });
+  }
+
+  /* Vorlagen-Manager */
+  const tplBackdrop = document.getElementById('tplBackdrop');
+  const tplList = document.getElementById('tplList');
+  function openTpl(){ tplBackdrop.style.display='flex'; renderTplEditor(); }
+  function closeTpl(){ tplBackdrop.style.display='none'; tplList.innerHTML=''; }
+  function renderTplEditor(){
+    const tpls = loadTpls();
+    tplList.innerHTML='';
+    tpls.forEach((t,i)=>{
+      const row=document.createElement('div'); row.className='row';
+      row.innerHTML=`
+        <input class="input" style="min-width:180px" value="${(t.name||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="name">
+        <textarea class="input grow" data-idx="${i}" data-field="text">${(t.text||'').replace(/</g,'&lt;')}</textarea>
+        <button class="btn" type="button" data-idx="${i}" data-action="del">Löschen</button>
+      `;
+      tplList.appendChild(row);
+    });
+    tplList.querySelectorAll('input[data-field],textarea[data-field]').forEach(el=>{
+      el.addEventListener('input', ()=>{
+        const arr = loadTpls();
+        const i=parseInt(el.dataset.idx,10); const f=el.dataset.field;
+        arr[i][f]=el.value;
+        localStorage.setItem(TPL_KEY, JSON.stringify(arr));
+      });
+    });
+    tplList.querySelectorAll('button[data-action="del"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const arr = loadTpls(); arr.splice(parseInt(btn.dataset.idx,10),1);
+        localStorage.setItem(TPL_KEY, JSON.stringify(arr));
+        renderTplEditor();
+      });
+    });
+  }
+  function addTpl(){
+    const arr = loadTpls();
+    arr.push({name:'Neue Vorlage', text:'Hallo {Anrede} {Nachname}, …'});
+    localStorage.setItem(TPL_KEY, JSON.stringify(arr));
+    renderTplEditor();
+  }
+  function saveTpls(){ alert('Vorlagen gespeichert.'); }
+  function resetTpls(){ localStorage.setItem(TPL_KEY, JSON.stringify(defaultTemplates())); renderTplEditor(); }
+
+  (function init(){
+    ensureDefaults();
+    populateWaMenu();    // behält letzte Auswahl
+    setupWaLinks();
+    document.getElementById('btnManageTpl').addEventListener('click', openTpl);
+    document.getElementById('tplBackdrop').addEventListener('click',(e)=>{ if(e.target.id==='tplBackdrop') closeTpl(); });
+  })();
+</script>
+</body>
+</html>

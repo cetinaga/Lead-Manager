@@ -1,0 +1,16 @@
+[
+  {
+    "id": 135,
+    "anrede": "Herr",
+    "vorname": "Max",
+    "nachname": "Mustermann",
+    "geburtstag": "01.01.1990",
+    "telefon": "+496211234567",
+    "email": "kunde@example.com",
+    "notes": "Rückruf am Nachmittag",
+    "wiedervorlage_datum": "",
+    "status": "neu",
+    "email_sent_at": "",
+    "source_url": "https://beamten-infoportal.de/anfrage/123"
+  }
+]

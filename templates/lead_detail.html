@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><title>Lead Details</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;margin:2rem}
+  .btn{display:inline-block;margin-right:8px;padding:8px 12px;border:1px solid #CBD6E2;border-radius:6px;background:#fff;cursor:pointer;text-decoration:none;color:#33475B}
+  .primary{background:#FF7A59;border-color:#FF7A59;color:#fff}
+  .danger{background:#dc3545;border-color:#dc3545;color:#fff}
+</style>
+</head>
+<body>
+  <p><a class="btn" href="/">« Zur Übersicht</a></p>
+  <h1>Lead {{ lead.id }}</h1>
+  <ul>
+    <li>Anrede: {{ lead.anrede }}</li>
+    <li>Name: {{ lead.vorname }} {{ lead.nachname }}</li>
+    <li>Email: {{ lead.email }}</li>
+    <li>Telefon: {{ lead.telefon }}</li>
+    <li>Status: {{ lead.status }}</li>
+    <li>Notizen: <pre style="white-space:pre-wrap">{{ lead.notes }}</pre></li>
+    <li>Wiedervorlage: {{ lead.wiedervorlage_datum or '—' }}</li>
+    <li>E-Mail gesendet: {{ lead.email_sent_at or '—' }}</li>
+  </ul>
+  <div style="margin-top:10px;">
+    <a class="btn" href="/leads/{{ lead.id }}/edit">Bearbeiten</a>
+    <form action="/leads/{{ lead.id }}/notify/email" method="post" style="display:inline;">
+      <button class="btn primary" type="submit">E-Mail senden</button>
+    </form>
+    <form action="/leads/{{ lead.id }}/delete" method="post" style="display:inline;" onsubmit="return confirm('Lead wirklich löschen?')">
+      <button class="btn danger" type="submit">Löschen</button>
+    </form>
+  </div>
+</body>
+</html>

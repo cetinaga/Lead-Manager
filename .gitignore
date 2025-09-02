@@ -1,0 +1,34 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+.env
+.venv/
+venv/
+env/
+ENV/
+instance/
+*.db
+*.sqlite3
+
+# --- Node/Frontend ---
+node_modules/
+dist/
+build/
+*.log
+
+# --- VS Code ---
+.vscode/
+.history/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- OneDrive typische Temp-Dateien ---
+~$*
+*.tmp

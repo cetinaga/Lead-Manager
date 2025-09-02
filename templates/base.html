@@ -1,0 +1,68 @@
+// lead_manager/templates/base.html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Lead Management{% endblock %}</title>
+    <style>
+        :root {
+            --primary-color: #FF7A59; --secondary-color: #7C98B6; --text-color: #33475B;
+            --background-color: #F5F8FA; --card-background: #FFFFFF; --border-color: #CBD6E2;
+            --border-radius: 3px; --box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body { font-family: var(--font-family); margin: 0; padding: 2rem; background-color: var(--background-color); color: var(--text-color); line-height: 1.6; }
+        .container { max-width: 1600px; margin: 0 auto; }
+        h1, h2 { font-weight: 600; }
+        a { color: #007A9B; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+        .card { padding: 1.5rem 2rem; background-color: var(--card-background); border-radius: var(--border-radius); margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
+        
+        .action-button, button {
+            display: inline-block; padding: 0.6rem 1.2rem; margin-bottom: 0; border-radius: var(--border-radius);
+            border: 1px solid transparent; cursor: pointer; font-size: 0.9em; font-weight: 600; text-align: center;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background-color: var(--card-background); color: var(--text-color); border-color: var(--border-color); }
+        .btn-secondary:hover { background-color: var(--background-color); }
+        .btn-delete { background-color: #f2545b; color: white; border-color: #f2545b; }
+
+        .action-bar { display: flex; gap: 1rem; align-items: center; }
+        .controls-wrapper { display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; margin-bottom: 1rem; }
+        .search-bar { display: flex; gap: 1rem; align-items: center; }
+        
+        table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 1rem 0.5rem; text-align: left; vertical-align: top; }
+        th { font-size: 0.8em; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        tbody tr:hover { background-color: var(--background-color); }
+        
+        input, select, textarea {
+            padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            font-size: 1rem; width: 100%; box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 1px var(--primary-color); outline: none; }
+
+        .status-tabs a { padding: 0.5rem 0; margin-right: 1.5rem; text-decoration: none; color: var(--secondary-color); font-weight: 600; border-bottom: 3px solid transparent; }
+        .status-tabs a.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .status-tabs a.heute-faellig.active { color: #d92732; border-bottom-color: #d92732; }
+
+        .contact-line { display: flex; align-items: center; gap: 12px; }
+        .contact-line .icon-link, .contact-line .icon-button { text-decoration: none; background: none; border: none; padding: 0; cursor: pointer; }
+        .contact-line .icon-button svg, .contact-line a.icon-link svg { width: 18px; height: 18px; vertical-align: middle; }
+        
+        .notes-actions { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .notes-actions button { padding: 0.2rem 0.5rem; font-size: 0.8em; }
+        
+        .wiedervorlage-form .date-input-group { display: flex; align-items: center; gap: 5px; }
+        .wiedervorlage-form .clear-date { font-size: 1.2em; color: var(--danger-color); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
