@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lead anlegen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --border:#e5e7eb; --fg:#0f172a; --muted:#64748b; }
+    body{font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; margin:0; background:#f8fafc; color:var(--fg)}
+    .container{max-width:1000px;margin:0 auto;padding:20px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+    h1{margin:0 0 12px;font-size:22px}
+    .row{display:flex;gap:10px;margin:8px 0;flex-wrap:wrap}
+    .input{padding:10px 12px;border:1px solid var(--border);border-radius:10px;min-width:220px;flex:1}
+    .small{font-size:12px;color:var(--muted)}
+    .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .btn{padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-weight:600;color:var(--fg);text-decoration:none;display:inline-block}
+    .btn-primary{background:#0EA5E9;border-color:#0EA5E9;color:#fff}
+  </style>
+  <link rel="stylesheet" href="/static/flowiq.css">
+</head>
+<body>
+<div class="container">
+  <div class="toolbar">
+    <a class="btn" href="/">Zurück</a>
+    <span class="small" style="margin-left:6px;color:#64748B">v{{ app_version }}</span>
+  </div>
+
+  <div class="card">
+    <h1>Lead anlegen</h1>
+    <form action="/leads/new" method="post">
+      <div class="row">
+        <select class="input" name="anrede" style="max-width:140px">
+          <option value="-">-</option>
+          <option value="Herr">Herr</option>
+          <option value="Frau">Frau</option>
+        </select>
+        <input class="input" name="vorname" placeholder="Vorname">
+        <input class="input" name="nachname" placeholder="Nachname">
+      </div>
+      <div class="row">
+        <input class="input" name="geburtstag" placeholder="TT.MM.JJJJ" style="max-width:160px">
+        <input class="input" name="telefon" placeholder="Telefon">
+        <input class="input" name="email" placeholder="E-Mail">
+      </div>
+      <div class="row">
+        <input class="input" name="strasse" placeholder="Straße + Nr.">
+        <input class="input" name="plz" placeholder="PLZ" style="max-width:150px">
+        <input class="input" name="stadt" placeholder="Ort">
+      </div>
+      <div class="row">
+        <label class="small" style="min-width:110px;align-self:center">Beruf</label>
+        <select class="input" name="profession" style="max-width:240px">
+          <option value=""></option>
+          <option>Beamtenanwärter</option>
+          <option>Beamter</option>
+          <option>Arbeitnehmer</option>
+          <option>Selbstständig</option>
+          <option>Student</option>
+        </select>
+        <label class="small" style="min-width:110px;align-self:center">Dienstherr</label>
+        <select class="input" name="employer" style="max-width:280px">
+          <option value=""></option>
+          <option>Bund</option>
+          <option>Baden-Württemberg</option>
+          <option>Bayern</option>
+          <option>Berlin</option>
+          <option>Brandenburg</option>
+          <option>Bremen</option>
+          <option>Hamburg</option>
+          <option>Hessen</option>
+          <option>Mecklenburg-Vorpommern</option>
+          <option>Niedersachsen</option>
+          <option>Nordrhein-Westfalen</option>
+          <option>Rheinland-Pfalz</option>
+          <option>Saarland</option>
+          <option>Sachsen</option>
+          <option>Sachsen-Anhalt</option>
+          <option>Schleswig-Holstein</option>
+          <option>Thüringen</option>
+        </select>
+      </div>
+      <div class="row">
+        <textarea class="input" name="notes" placeholder="Notizen" style="min-height:120px"></textarea>
+      </div>
+      <div class="row">
+        <select class="input" name="status" style="max-width:220px">
+          {% for s in ['neu','nicht erreicht','Termin','RiVo','in Bearbeitung','Abgelegt'] %}
+            <option value="{{ s }}" {% if s=='neu' %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" type="submit">Speichern</button>
+        <a class="btn" href="/">Abbrechen</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
+

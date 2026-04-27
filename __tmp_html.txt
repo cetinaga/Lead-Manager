@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -95,12 +95,6 @@
 
     .mini-actions{display:flex;gap:10px;margin-top:6px}
     .contact-links{margin-top:6px}
-    .contact-row{display:flex;align-items:center;gap:6px;line-height:1.6}
-    .copy-btn{
-      width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;
-      border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;
-    }
-    .copy-btn:hover{box-shadow:0 0 0 2px rgba(2,132,199,.12) inset}
 
     .modal-backdrop{position:fixed;inset:0;background:rgba(2,8,23,.45);display:none;align-items:center;justify-content:center;z-index:50}
     .modal{width:min(900px,95vw);max-height:85vh;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:12px 12px 16px}
@@ -147,13 +141,13 @@
 
       <div class="wa-menu-wrap">
         <select id="waMenu" class="select" title="WhatsApp & Vorlagen"></select>
-        <button type="button" class="btn" id="btnManageTpl" title="Vorlagen verwalten">⚙️</button>
+        <button type="button" class="btn" id="btnManageTpl" title="Vorlagen verwalten">Vorlagen</button>
       </div>
     </div>
 
     <form class="searchrow" action="/" method="get">
       {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
-      <input class="input" type="text" name="q" value="{{ search_term }}" placeholder="Suche… (Name, E-Mail, Telefon, Adresse, Notizen)">
+      <input class="input" type="text" name="q" value="{{ search_term }}" placeholder="Suche… (Name, E‑Mail, Telefon, Adresse, Notizen)">
       <button class="btn-compact" type="submit">Suchen</button>
       <a class="btn-compact" href="/">Reset</a>
     </form>
@@ -186,9 +180,7 @@
       {% for lead in leads %}
         {% set wa_digits = (lead.telefon or '')|replace(' ','')|replace('+','')|replace('-','') %}
         {% set full_name = ((lead.vorname or '') ~ ' ' ~ (lead.nachname or ''))|trim %}
-        {% set wa_calendly_base = 'https://calendly.com/ckir-onlinemakler24/abstimmungstermin-15-minuten' %}
-        {% set wa_calendly_url = wa_calendly_base %}
-        {% set calendly_base = 'https://calendly.com/ckir-onlinemakler24/teams-meeting-60-minuten' %}
+        {% set calendly_base = 'https://calendly.com/ckir-onlinemakler24/abstimmungstermin-15-minuten' %}
         {% set calendly_url = calendly_base ~ '?name=' ~ (full_name|urlencode) ~ '&email=' ~ ((lead.email or '')|urlencode) %}
 
         <tr>
@@ -196,9 +188,9 @@
           <td class="small nowrap">{{ loop.index }}</td>
 
           <td>
-            <form action="/leads/{{ lead.id }}/update_anrede" method="post" onsubmit="saveScrollPosition()">
+            <form action="/leads/{{ lead.id }}/update_anrede" method="post">
               <input type="hidden" name="redirect_url" value="{{ request.url }}">
-              <select class="anrede-select" name="anrede" onchange="submitWithScroll(this.form)">
+              <select class="anrede-select" name="anrede" onchange="this.form.submit()">
                 <option value="-" {% if lead.anrede == '-' %}selected{% endif %}>-</option>
                 <option value="Herr" {% if lead.anrede == 'Herr' %}selected{% endif %}>Herr</option>
                 <option value="Frau" {% if lead.anrede == 'Frau' %}selected{% endif %}>Frau</option>
@@ -221,9 +213,9 @@
               {% if lead.telefon %}
                 <a class="btn action call" href="#" onclick="dialAndLog(event, {{ lead.id }}, '{{ lead.telefon }}')" title="Anrufen">Anruf</a>
               {% endif %}
-              <form action="/leads/{{ lead.id }}/notify/email" method="post" style="display:inline;" onsubmit="saveScrollPosition()">
+              <form action="/leads/{{ lead.id }}/notify/email" method="post" style="display:inline;">
                 <input type="hidden" name="redirect_url" value="{{ request.url }}">
-                <button type="submit" class="btn action email">E-Mail</button>
+                <button type="submit" class="btn action email">E‑Mail</button>
               </form>
             </div>
 
@@ -231,7 +223,6 @@
               {% if lead.telefon %}
               <a class="iconbtn wa-link"
                   href="#"
-                  data-lead-id="{{ lead.id }}"
                   data-phone="{{ wa_digits }}"
                   data-anrede="{{ lead.anrede or '' }}"
                   data-vorname="{{ lead.vorname or '' }}"
@@ -239,14 +230,14 @@
                   data-name="{{ full_name }}"
                   data-email="{{ lead.email or '' }}"
                   data-telefon="{{ lead.telefon or '' }}"
-                  data-termin="{{ wa_calendly_url }}"
+                  data-termin="{{ calendly_url }}"
                   title="WhatsApp">
                 <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M20.52 3.48A11.94 11.94 0 0012 .5C5.73.5.95 5.28.95 11.55c0 2.03.53 3.97 1.54 5.7L.5 23.5l6.41-1.96a11.05 11.05 0 005.09 1.27h.05c6.27 0 11.05-4.78 11.05-11.05 0-2.96-1.15-5.74-3.58-7.78zM12.05 21a9.2 9.2 0 01-4.7-1.3l-.34-.2-3.8 1.16 1.15-3.7-.22-.38a9.5 9.5 0 01-1.4-4.99C2.74 6.3 7.06 2 12.5 2c2.5 0 4.84.97 6.6 2.74A9.27 9.27 0 0121 11.95C21 17.4 16.7 21 12.05 21zm5.2-6.74c-.28-.14-1.66-.82-1.92-.91-.26-.1-.45-.14-.64.14-.19.27-.73.9-.9 1.08-.17.19-.33.21-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.4-1.65-1.56-1.93-.16-.27-.02-.42.12-.56.12-.12.27-.31.4-.47.13-.16.17-.27.26-.46.08-.19.04-.35-.02-.49-.07-.14-.64-1.52-.88-2.1-.23-.56-.47-.49-.64-.49h-.55c-.19 0-.49.07-.75.35-.26.28-1 1-1 2.43 0 1.43 1.03 2.81 1.18 3 .14.19 2.03 3.08 4.9 4.32.68.29 1.21.46 1.62.59.68.22 1.3.19 1.79.12.55-.08 1.66-.68 1.9-1.33.24-.65.24-1.21.17-1.33-.07-.12-.25-.19-.53-.33z"/>
                 </svg>
               </a>
               {% endif %}
-              <a class="iconbtn calendly-link" href="{{ calendly_url }}" title="Calendly" target="_blank" rel="noreferrer">
+              <a class="iconbtn" href="{{ calendly_url }}" title="Calendly" target="_blank" rel="noreferrer">
                 <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 112 0v1zm13 7H4v9a1 1 0 001 1h14a1 1 0 001-1V9zM4 7h16V6H4v1z"/>
                 </svg>
@@ -254,27 +245,13 @@
             </div>
 
             <div class="small contact-links">
-              {% if lead.email %}
-              <div class="contact-row">
-                <a href="mailto:{{ lead.email }}">✉ {{ lead.email }}</a>
-                <button type="button" class="copy-btn" data-copy="{{ lead.email }}" title="E-Mail kopieren">
-                  <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4a2 2 0 012-2h9a2 2 0 012 2v11a2 2 0 01-2 2h-1v-2h1V4h-9v1H8V4zm-4 4a2 2 0 012-2h9a2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V8zm2 0v11h9V8H6z"/></svg>
-                </button>
-              </div>
-              {% else %}-{% endif %}
-              {% if lead.telefon %}
-              <div class="contact-row">
-                <a id="tel-{{ lead.id }}" href="tel:{{ lead.telefon }}">☎ {{ lead.telefon }}</a>
-                <button type="button" class="copy-btn" data-copy="{{ lead.telefon }}" title="Rufnummer kopieren">
-                  <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4a2 2 0 012-2h9a2 2 0 012 2v11a2 2 0 01-2 2h-1v-2h1V4h-9v1H8V4zm-4 4a2 2 0 012-2h9a2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V8zm2 0v11h9V8H6z"/></svg>
-                </button>
-              </div>
-              {% endif %}
+              {% if lead.email %}<a href="mailto:{{ lead.email }}">✉ {{ lead.email }}</a>{% else %}-{% endif %}<br>
+              {% if lead.telefon %}<a id="tel-{{ lead.id }}" href="tel:{{ lead.telefon }}">☎ {{ lead.telefon }}</a>{% endif %}
             </div>
           </td>
 
           <td>
-            <form action="/leads/{{ lead.id }}/update_note" method="post" class="note-wrap" onsubmit="saveScrollPosition()">
+            <form action="/leads/{{ lead.id }}/update_note" method="post" class="note-wrap">
               <input type="hidden" name="redirect_url" value="{{ request.url }}">
               <textarea id="notes-{{ lead.id }}" name="notes" placeholder="Notizen … (alle Protokolle hier)">{{ lead.notes or '' }}</textarea>
               <button type="submit" class="note-save" title="Speichern">
@@ -284,7 +261,7 @@
           </td>
 
           <td>
-            <form action="/leads/{{ lead.id }}/update_status" method="post" onsubmit="saveScrollPosition()">
+            <form action="/leads/{{ lead.id }}/update_status" method="post">
               <input type="hidden" name="redirect_url" value="{{ request.url }}">
               <select class="status-select" name="status" onchange="onStatusChange(this)">
                 <option value="neu" {% if lead.status == 'neu' %}selected{% endif %}>Neu</option>
@@ -328,55 +305,21 @@
   <div class="modal">
     <div class="modal-header">
       <strong>WhatsApp-Vorlagen</strong>
-      <button class="close-btn" type="button" onclick="closeTpl()">Schliessen</button>
+      <button class="close-btn" type="button" onclick="closeTpl()">Schließen</button>
     </div>
     <div>
       <p class="small">Platzhalter: {Anrede}, {Vorname}, {Nachname}, {Name}, {Email}, {Telefon}, {TerminLink}</p>
-      <div style="display:flex;gap:8px;margin:8px 0;">
-        <button class="btn-compact tpl-link-tab active" type="button" data-target="waLinkPanel">WhatsApp-Link</button>
-        <button class="btn-compact tpl-link-tab" type="button" data-target="calLinkPanel">Calendly-Link</button>
-      </div>
-      <div id="waLinkPanel" class="link-panel">
-        <label class="small" for="waTerminInput">WhatsApp-Termin-Link (WA-Button &amp; {TerminLink})</label>
-        <input id="waTerminInput" class="input" style="min-width:360px" placeholder="https://calendly.com/.../abstimmungstermin-15-minuten" />
-      </div>
-      <div id="calLinkPanel" class="link-panel" style="display:none">
-        <label class="small" for="calTerminInput">Calendly/Teams-Link (Calendly-Button)</label>
-        <input id="calTerminInput" class="input" style="min-width:360px" placeholder="https://calendly.com/.../teams-meeting-60-minuten" />
-      </div>
       <div id="tplList" class="list"></div>
       <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn" type="button" onclick="addTpl()">Vorlage hinzufuegen</button>
+        <button class="btn" type="button" onclick="addTpl()">Vorlage hinzufügen</button>
         <button class="btn" type="button" onclick="saveTpls()">Speichern</button>
         <button class="btn" type="button" onclick="resetTpls()">Auf Standard setzen</button>
       </div>
-    </div>
     </div>
   </div>
 </div>
 
 <script>
-  const SCROLL_KEY = 'lead_scroll_y';
-  function saveScrollPosition(){
-    try{ sessionStorage.setItem(SCROLL_KEY, String(window.scrollY || window.pageYOffset || 0)); }catch(_){}
-  }
-  function restoreScrollPosition(){
-    try{
-      const raw = sessionStorage.getItem(SCROLL_KEY);
-      if (raw !== null){
-        const y = parseInt(raw, 10);
-        if (!isNaN(y)) window.scrollTo(0, y);
-      }
-      sessionStorage.removeItem(SCROLL_KEY);
-    }catch(_){}
-  }
-  function submitWithScroll(form){
-    saveScrollPosition();
-    form.submit();
-  }
-  window.addEventListener('DOMContentLoaded', restoreScrollPosition);
-  window.addEventListener('beforeunload', saveScrollPosition);
-
   /* ======= PDF Upload ======= */
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('fileInput');
@@ -410,9 +353,8 @@
 
   function onStatusChange(sel) {
     const form = sel.form;
-    const redirect = form.querySelector('input[name="redirect_url"]');
-    if (redirect) redirect.value = window.location.href;
-    saveScrollPosition();
+    const newStatus = sel.value;
+    form.querySelector('input[name="redirect_url"]').value = '/?status=' + encodeURIComponent(newStatus);
     form.submit();
   }
 
@@ -434,7 +376,7 @@
             const fd = new FormData(form);
             fetch(form.action, { method: 'POST', body: fd })
               .then(r => r.json())
-              .then(data => { if (data && data.ok) { closeModal(); saveScrollPosition(); location.reload(); } });
+              .then(data => { if (data && data.ok) { closeModal(); location.reload(); } });
           });
         } else {
           modalBody.textContent = 'Formular konnte nicht geladen werden.';
@@ -452,7 +394,6 @@
     const params = new URLSearchParams();
     ids.forEach(id => params.append('selected', id));
     params.append('redirect_url', window.location.href);
-    saveScrollPosition();
     fetch('/leads/bulk_delete', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() })
       .then(() => location.reload());
   }
@@ -473,100 +414,49 @@
       .finally(() => { window.location.href = `tel:${tel}`; });
   }
 
-
-  function bindCopyButtons(){
-    document.querySelectorAll('.copy-btn').forEach(btn=>{
-      if (btn.__copyBound) return;
-      btn.__copyBound = true;
-      btn.addEventListener('click', async ()=>{
-        const value = (btn.dataset.copy || '').trim();
-        if (!value) return;
-        try { await navigator.clipboard.writeText(value); showToast('Kopiert'); }
-        catch(_) { alert('Konnte nicht kopieren.'); }
-      });
-    });
-  }
-
   /* WhatsApp/Vorlagen Dropdown – bleibt auf letzter Auswahl */
   const TPL_KEY = 'waTemplates_v1';
   const TPL_IDX_KEY = 'waTplIdx_v1';
   const MODE_KEY = 'waMode_v1';
   const MENU_SEL_KEY = 'waMenuSel_v1';
-  const WA_TERMIN_BASE_KEY = 'waTerminBase_v1';
-  const CAL_TERMIN_BASE_KEY = 'calTerminBase_v1';
-  const DEFAULT_WA_TERMIN_BASE = 'https://calendly.com/ckir-onlinemakler24/abstimmungstermin-15-minuten';
-  const DEFAULT_CAL_TERMIN_BASE = 'https://calendly.com/ckir-onlinemakler24/teams-meeting-60-minuten';
-
-  function getWaTerminBase(){
-    const saved = (localStorage.getItem(WA_TERMIN_BASE_KEY) || '').trim();
-    return saved || DEFAULT_WA_TERMIN_BASE;
-  }
-
-  function getCalendlyBase(){
-    const saved = (localStorage.getItem(CAL_TERMIN_BASE_KEY) || '').trim();
-    return saved || DEFAULT_CAL_TERMIN_BASE;
-  }
-
-  function buildTerminLink(base, ctx, withParams=true){
-    if (!base) return '';
-    const data = ctx || {};
-    if (!withParams) return base;
-    const rawName = (data.name && data.name.trim()) || `${data.vorname||''} ${data.nachname||''}`.trim();
-    const name = rawName || '';
-    const email = (data.email || '').trim();
-    const phone = (data.telefon || '').trim();
-    const params = [];
-    if (name) params.push(`name=${encodeURIComponent(name)}`);
-    if (email) params.push(`email=${encodeURIComponent(email)}`);
-    if (phone) params.push(`a1=${encodeURIComponent(phone)}`);
-    const sep = base.includes('?') ? '&' : '?';
-    return params.length ? `${base}${sep}${params.join('&')}` : base;
-  }
 
   function defaultTemplates(){
-    return [{name:'PKV Erstkontakt', text:'Hallo {Anrede},\n\nvielen Dank für Ihr Interesse an einem kostenlosen und unverbindlichen Vergleich zur privaten Krankenversicherung für Beamte und Beamtenanwärter.\n\nFür einen individuellen Marktvergleich benötige ich noch weitere Angaben. Wann passt Ihnen ein kurzer Anruf am besten?\n\nAlternativ können Sie einen passenden Termin in meinem Kalender finden und direkt eintragen.\n\n👉🏼 Termin buchen: {TerminLink}\n\nMit freundlichen Grüßen\nCetin Kir\n\nWbV Onlinemakler GmbH – Exklusivpartner des Beamten-Infoportal.de'}];
-  }
-  function loadTpls(){
-    try{
-      const raw = localStorage.getItem(TPL_KEY);
-      if (!raw) return defaultTemplates();
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) && arr.length ? arr : defaultTemplates();
-    }catch(e){ return defaultTemplates(); }
-  }
-  function ensureDefaults(){
-    if (!localStorage.getItem(MODE_KEY)) localStorage.setItem(MODE_KEY,'app');
-    if (localStorage.getItem(TPL_IDX_KEY) === null) localStorage.setItem(TPL_IDX_KEY,'0');
-    if (!localStorage.getItem(MENU_SEL_KEY)) localStorage.setItem(MENU_SEL_KEY,'__mode_app');
-    const savedWa = (localStorage.getItem(WA_TERMIN_BASE_KEY) || '').trim();
-    if (!savedWa || savedWa === DEFAULT_CAL_TERMIN_BASE) localStorage.setItem(WA_TERMIN_BASE_KEY, DEFAULT_WA_TERMIN_BASE);
-    if (!localStorage.getItem(CAL_TERMIN_BASE_KEY)) localStorage.setItem(CAL_TERMIN_BASE_KEY, DEFAULT_CAL_TERMIN_BASE);
-  }
-  function populateWaMenu(){
+  return [{
+    name: 'PKV Erstkontakt',
+    text: 'Hallo {Anrede},\n\n' +
+          'vielen Dank für Ihr Interesse an einem kostenlosen und unverbindlichen Vergleich zur privaten Krankenversicherung für Beamte und Beamtenanwärter.\n\n' +
+          'Für einen individuellen Marktvergleich benötige ich noch weitere Angaben. Wann passt Ihnen ein kurzer Anruf am besten?\n\n' +
+          'Alternativ können Sie einen passenden Termin in meinem Kalender finden und direkt eintragen.\n\n' +
+          'Termin buchen: {TerminLink}\n\n' +
+          'Mit freundlichen Grüßen\n' +
+          'Cetin Kir\n\n' +
+          'WbV Onlinemakler GmbH - Exklusivpartner des Beamten-Infoportal.de'
+  }];
+}  function populateWaMenu(){
     const menu = document.getElementById('waMenu');
     const tpls = loadTpls();
-    let savedSel = localStorage.getItem(MENU_SEL_KEY) || '__mode_app';
+    let savedSel = localStorage.getItem(MENU_SEL_KEY) || 'tpl:0';
     let savedTplIdx = parseInt(localStorage.getItem(TPL_IDX_KEY) || '0',10);
     if (isNaN(savedTplIdx) || savedTplIdx<0 || savedTplIdx>=tpls.length) savedTplIdx=0;
 
     const opts = [];
-    opts.push(`<option value="__mode_app">WhatsApp: App (Desktop)</option>`);
-    opts.push(`<option value="__mode_web">WhatsApp: Web (Browser)</option>`);
-    opts.push(`<option value="tpl:${savedTplIdx}">${tpls[savedTplIdx].name}</option>`);
+    tpls.forEach((t,i)=>{
+      const label = (t && t.name) ? t.name : `Vorlage ${i+1}`;
+      opts.push(`<option value="tpl:${i}">${label}</option>`);
+    });
     menu.innerHTML = opts.join('');
 
     // Auswahl bestehen lassen:
-    const wanted = savedSel.startsWith('tpl:') ? `tpl:${savedTplIdx}` : savedSel;
+    let wanted = savedSel;
+    if (!wanted.startsWith('tpl:')) wanted = `tpl:${savedTplIdx}`;
     Array.from(menu.options).forEach(o => o.selected = (o.value === wanted));
 
     menu.onchange = () => {
       const val = menu.value;
       localStorage.setItem(MENU_SEL_KEY, val);
-      if (val === '__mode_app'){ localStorage.setItem(MODE_KEY,'app'); return; }
-      if (val === '__mode_web'){ localStorage.setItem(MODE_KEY,'web'); return; }
       if (val.startsWith('tpl:')){
         const idx = parseInt(val.split(':')[1],10);
-        localStorage.setItem(TPL_IDX_KEY, String(idx));
+        if (!isNaN(idx)) localStorage.setItem(TPL_IDX_KEY, String(idx));
       }
     };
   }
@@ -602,8 +492,6 @@
   function isMobile(){ return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
 
   function renderTpl(text, ctx){
-    ctx = ctx || {};
-    const terminLink = buildTerminLink(getWaTerminBase(), ctx, false) || ctx.termin || '';
     const map = {
       '{ANREDE}': ctx.anrede || '',
       '{VORNAME}': ctx.vorname || '',
@@ -611,7 +499,7 @@
       '{NAME}': ctx.name || `${ctx.vorname||''} ${ctx.nachname||''}`.trim(),
       '{EMAIL}': ctx.email || '',
       '{TELEFON}': ctx.telefon || '',
-      '{TERMINLINK}': terminLink
+      '{TERMINLINK}': ctx.termin || ''
     };
     let out = text || '';
     Object.keys(map).forEach(k=>{
@@ -621,12 +509,8 @@
     return out;
   }
 
-
-
-
   function setupWaLinks(){
     document.querySelectorAll('.wa-link').forEach(el=>{
-      if (el.__waBound) return; el.__waBound = true;
       el.addEventListener('click', async (e)=>{
         e.preventDefault();
 
@@ -644,30 +528,10 @@
           telefon: el.dataset.telefon || '',
           termin:  el.dataset.termin  || ''
         };
-        const waLink = getWaTerminBase();
-        el.dataset.termin = waLink;
-        const calBtn = el.parentElement ? el.parentElement.querySelector('.calendly-link') : null;
-        ctx.termin = waLink;
-        if (calBtn){ calBtn.href = buildTerminLink(getCalendlyBase(), ctx, true); }
         const phone = (el.dataset.phone||'').replace(/[^\d]/g,'');
+        if(!phone){ alert('Keine gültige Telefonnummer für WhatsApp.'); return; }
 
-        if(!phone){ alert('Keine gueltige Telefonnummer fuer WhatsApp.'); return; }
         const text = renderTpl(tpl.text, ctx).replace(/\n/g, '\r\n');
-
-        const leadId = parseInt(el.dataset.leadId||'0',10);
-        if (leadId){
-          try{
-            const resp = await fetch(`/leads/${leadId}/log_whatsapp`, { method:'POST' });
-            const data = await resp.json();
-            if (data && data.ok && data.note){
-              const ta = document.getElementById(`notes-${leadId}`);
-              if (ta){
-                const prefix = ta.value.trim() ? '\n' : '';
-                ta.value = ta.value + prefix + data.note;
-              }
-            }
-          }catch(_){ }
-        }
 
         try { await navigator.clipboard.writeText(text); } catch(e) {}
         showToast('Vorlage kopiert');
@@ -683,35 +547,12 @@
       }, {passive:false});
     });
   }
+
   /* Vorlagen-Manager */
   const tplBackdrop = document.getElementById('tplBackdrop');
   const tplList = document.getElementById('tplList');
-  function openTpl(){
-    tplBackdrop.style.display='flex';
-    syncLinkInputs();
-    wireLinkTabs();
-    renderTplEditor();
-  }
+  function openTpl(){ tplBackdrop.style.display='flex'; renderTplEditor(); }
   function closeTpl(){ tplBackdrop.style.display='none'; tplList.innerHTML=''; }
-  function syncLinkInputs(){
-    const waInput = document.getElementById('waTerminInput');
-    const calInput = document.getElementById('calTerminInput');
-    if (waInput){ waInput.value = getWaTerminBase(); waInput.oninput = ()=>localStorage.setItem(WA_TERMIN_BASE_KEY, (waInput.value||'').trim() || DEFAULT_WA_TERMIN_BASE); }
-    if (calInput){ calInput.value = getCalendlyBase(); calInput.oninput = ()=>localStorage.setItem(CAL_TERMIN_BASE_KEY, (calInput.value||'').trim() || DEFAULT_CAL_TERMIN_BASE); }
-  }
-  function wireLinkTabs(){
-    const tabs = Array.from(document.querySelectorAll('.tpl-link-tab'));
-    const panels = { waLinkPanel: document.getElementById('waLinkPanel'), calLinkPanel: document.getElementById('calLinkPanel') };
-    tabs.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        tabs.forEach(b=>b.classList.toggle('active', b===btn));
-        Object.keys(panels).forEach(key=>{
-          const panel = panels[key]; if (!panel) return;
-          panel.style.display = (btn.dataset.target === key) ? 'block' : 'none';
-        });
-      });
-    });
-  }
   function renderTplEditor(){
     const tpls = loadTpls();
     tplList.innerHTML='';
@@ -730,41 +571,61 @@
         const i=parseInt(el.dataset.idx,10); const f=el.dataset.field;
         arr[i][f]=el.value;
         localStorage.setItem(TPL_KEY, JSON.stringify(arr));
+        populateWaMenu();
       });
     });
     tplList.querySelectorAll('button[data-action="del"]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
-        const arr = loadTpls(); arr.splice(parseInt(btn.dataset.idx,10),1);
+        const iDel = parseInt(btn.dataset.idx,10);
+        const arr = loadTpls();
+        arr.splice(iDel,1);
         localStorage.setItem(TPL_KEY, JSON.stringify(arr));
+        let idx = parseInt(localStorage.getItem(TPL_IDX_KEY) || '0',10);
+        if (isNaN(idx) || idx<0) idx = 0;
+        if (idx >= arr.length) idx = Math.max(0, arr.length-1);
+        localStorage.setItem(TPL_IDX_KEY, String(idx));
+        localStorage.setItem(MENU_SEL_KEY, `tpl:${idx}`);
+        populateWaMenu();
         renderTplEditor();
       });
     });
   }
   function addTpl(){
     const arr = loadTpls();
-    arr.push({name:'Neue Vorlage', text:'Hallo {Anrede} {Nachname}, …'});
+    arr.push({name:'Neue Vorlage', text:'Hallo {Anrede} {Nachname}, ...'});
     localStorage.setItem(TPL_KEY, JSON.stringify(arr));
+    const newIdx = arr.length - 1;
+    localStorage.setItem(TPL_IDX_KEY, String(newIdx));
+    localStorage.setItem(MENU_SEL_KEY, `tpl:${newIdx}`);
+    populateWaMenu();
     renderTplEditor();
   }
-  function saveTpls(){ syncLinkInputs(); setupWaLinks(); alert('Vorlagen gespeichert.'); }
-  function resetTpls(){
-    localStorage.setItem(TPL_KEY, JSON.stringify(defaultTemplates()));
-    localStorage.setItem(WA_TERMIN_BASE_KEY, DEFAULT_WA_TERMIN_BASE);
-    localStorage.setItem(CAL_TERMIN_BASE_KEY, DEFAULT_CAL_TERMIN_BASE);
-    syncLinkInputs();
-    renderTplEditor();
-    setupWaLinks();
-  }
+  function saveTpls(){ alert('Vorlagen gespeichert.'); }
+  function resetTpls(){ localStorage.setItem(TPL_KEY, JSON.stringify(defaultTemplates())); renderTplEditor(); }
 
   (function init(){
     ensureDefaults();
     populateWaMenu();    // behält letzte Auswahl
     setupWaLinks();
-    bindCopyButtons();
     document.getElementById('btnManageTpl').addEventListener('click', openTpl);
     document.getElementById('tplBackdrop').addEventListener('click',(e)=>{ if(e.target.id==='tplBackdrop') closeTpl(); });
   })();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

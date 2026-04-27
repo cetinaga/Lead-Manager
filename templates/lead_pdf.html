@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lead Export – {{ lead.vorname or '' }} {{ lead.nachname or '' }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --fg:#111827; --muted:#6B7280; --border:#E5E7EB; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color:var(--fg); }
+    .page { max-width: 800px; margin: 24px auto; padding: 24px; border: 1px solid var(--border); border-radius: 10px; }
+    h1 { font-size: 22px; margin:0 0 4px; }
+    .sub { color:var(--muted); font-size: 12px; }
+    h2 { font-size: 16px; margin: 20px 0 8px; border-bottom:1px solid var(--border); padding-bottom:6px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+    .row { display:flex; gap:8px; }
+    .label { width: 220px; color:var(--muted); font-size: 12px; }
+    .val { font-weight: 600; }
+    .notes { white-space: pre-wrap; border:1px solid var(--border); border-radius:8px; padding:12px; background:#fafafa; }
+    .meta { margin-top: 8px; color:var(--muted); font-size: 12px; }
+    .toolbar { display:flex; justify-content: flex-end; gap:8px; margin-bottom:8px; }
+    .btn { display:inline-block; border:1px solid var(--border); background:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; color:#111827; font-size: 14px; }
+    .btn:hover { background:#f8f8f8; }
+    @media print {
+      .page { border:none; margin:0; border-radius:0; }
+      .toolbar { display:none; }
+      a { color:inherit; text-decoration:none; }
+    }
+  </style>
+</head>
+<body onload="setTimeout(() => window.print(), 200)">
+  <div class="page">
+    <div class="toolbar">
+      <a class="btn" href="#" onclick="window.print(); return false;">Drucken / Als PDF speichern</a>
+    </div>
+    <header>
+      <h1>Lead-Export</h1>
+      <div class="sub">App-Version: v{{ app_version }}</div>
+    </header>
+
+    <section>
+      <h2>Stammdaten</h2>
+      <div class="grid">
+        <div class="row"><div class="label">Anrede</div><div class="val">{{ lead.anrede or '-' }}</div></div>
+        <div class="row"><div class="label">Name</div><div class="val">{{ lead.vorname or '' }} {{ lead.nachname or '' }}</div></div>
+        <div class="row"><div class="label">Geburtstag</div><div class="val">{{ lead.geburtstag or '-' }}</div></div>
+        <div class="row"><div class="label">Alter</div><div class="val">{{ lead.age or '-' }}</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Kontakt</h2>
+      <div class="grid">
+        <div class="row"><div class="label">E-Mail</div><div class="val">{{ lead.email or '-' }}</div></div>
+        <div class="row"><div class="label">Telefon</div><div class="val">{{ lead.telefon or '-' }}</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Adresse</h2>
+      <div class="grid">
+        <div class="row"><div class="label">Straße</div><div class="val">{{ lead.strasse or '-' }}</div></div>
+        <div class="row"><div class="label">PLZ</div><div class="val">{{ lead.plz or '-' }}</div></div>
+        <div class="row"><div class="label">Ort</div><div class="val">{{ lead.stadt or '-' }}</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Prozess</h2>
+      <div class="grid">
+        <div class="row"><div class="label">Status</div><div class="val">{{ lead.status or '-' }}</div></div>
+        <div class="row"><div class="label">E-Mail gesendet am</div><div class="val">{{ lead.email_sent_at or '-' }}</div></div>
+        <div class="row"><div class="label">Angelegt</div><div class="val">{{ lead.created_at or '-' }}</div></div>
+        <div class="row"><div class="label">Zuletzt geändert</div><div class="val">{{ lead.updated_at or '-' }}</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Analyse</h2>
+      <div class="grid">
+        <div class="row"><div class="label">Startdatum</div><div class="val">{{ lead.start_date or '-' }}</div></div>
+        <div class="row"><div class="label">Beruf</div><div class="val">{{ lead.profession or '-' }}</div></div>
+        <div class="row"><div class="label">Beamtenstatus</div><div class="val">{{ lead.civil_servant_status or '-' }}</div></div>
+        <div class="row"><div class="label">Dienstherr</div><div class="val">{{ lead.employer or '-' }}</div></div>
+        <div class="row"><div class="label">Beihilfeanspruch</div><div class="val">{{ lead.subsidy_entitlement or '-' }}</div></div>
+        <div class="row"><div class="label">Vorversicherung</div><div class="val">{{ lead.previous_insurance or '-' }}</div></div>
+        <div class="row"><div class="label">Name Vorversicherung</div><div class="val">{{ lead.previous_insurance_name or '-' }}</div></div>
+        <div class="row"><div class="label">GKV-Tarif</div><div class="val">{{ lead.gkv_type or '-' }}</div></div>
+        <div class="row"><div class="label">PKV seit</div><div class="val">{{ lead.pkv_since or '-' }}</div></div>
+        <div class="row"><div class="label">Familienstand</div><div class="val">{{ lead.marital_status or '-' }}</div></div>
+        <div class="row"><div class="label">Kinder</div><div class="val">{{ lead.children if lead.children is not none else '-' }}</div></div>
+        <div class="row"><div class="label">Ehepartner Beamter</div><div class="val">{% if lead.spouse_is_civil_servant %}Ja{% elif lead.spouse_is_civil_servant == 0 %}Nein{% else %}-{% endif %}</div></div>
+        <div class="row"><div class="label">Kinder mitversichert</div><div class="val">{% if lead.children_co_insured %}Ja{% elif lead.children_co_insured == 0 %}Nein{% else %}-{% endif %}</div></div>
+        <div class="row" style="grid-column: 1 / -1;"><div class="label">Einschätzung Berater</div><div class="val">{{ lead.consultant_assessment or '-' }}</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Notizen</h2>
+      <div class="notes">{{ lead.notes or '' }}</div>
+    </section>
+
+    <footer class="meta">Lead-ID: {{ lead.id }}</footer>
+  </div>
+</body>
+</html>

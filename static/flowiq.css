@@ -1,0 +1,83 @@
+/* FlowIQ Look & Feel – light integration */
+/* Fonts */
+body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f0f2f5; }
+
+/* Cards */
+.card { border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
+
+/* Buttons */
+.btn { border-radius: 8px; transition: box-shadow .15s ease, transform .05s ease; }
+.btn:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.btn:active { transform: translateY(1px); }
+.btn.action { border-radius: 999px; font-weight: 600; }
+
+/* Icon buttons (WA/Calendly etc.) */
+.iconbtn { width: 36px; height: 36px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+.iconbtn:hover { background: #eef2ff; color: #4f46e5; border-color: #c7d2fe; }
+.icon { width: 16px; height: 16px; }
+
+/* Inputs */
+.input { border-radius: 8px; border-color: #e5e7eb; }
+.input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79,70,229,.15); }
+
+/* Status select (remove native arrow, pill look) */
+select.status-select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: none; border-radius: 999px; padding-right: 1.8rem; font-weight: 600; }
+select.status-select + .select-arrow { pointer-events: none; position: relative; display: inline-flex; align-items: center; margin-left: -1.6rem; color: #6b7280; }
+
+/* Toast */
+#toast { position: fixed; bottom: 24px; right: 24px; background: #111827; color: #fff; padding: 10px 14px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: .18s ease; font-weight: 600; font-size: 14px; }
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* Table hover */
+tbody tr:hover td { background: #f9fafb; }
+
+/* Small badges similar to Tailwind chips */
+.pill { border-radius: 999px; background: #eef2ff; border: 1px solid #c7d2fe; color: #4f46e5; }
+.pill.active { box-shadow: inset 0 0 0 2px rgba(79,70,229,.15); }
+
+/* Toolbar spacing tweaks */
+.toolbar { gap: 12px; }
+
+/* Layout with Sidebar */
+.fiq-layout { display: flex; min-height: 100vh; }
+.fiq-sidebar { width: 375px; background: #ffffff; box-shadow: 2px 0 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; padding: 20px; position: sticky; top: 0; height: 100vh; }
+.fiq-content { flex: 1; padding: 24px 32px; overflow-x: hidden; }
+.fiq-logo { display:flex; align-items:center; gap:10px; font-size:20px; font-weight: 700; color:#1f2937; margin-bottom: 24px; }
+.fiq-logo i { color: #4f46e5; font-size: 22px; }
+.fiq-nav { display:flex; flex-direction:column; gap:8px; margin-bottom: auto; }
+.fiq-nav-link { display:flex; align-items:center; gap:12px; color:#374151; text-decoration:none; padding:10px 12px; border-radius:12px; }
+.fiq-nav-link:hover { background:#eef2ff; color:#4f46e5; }
+.fiq-nav-link i { width:20px; text-align:center; }
+.fiq-user { margin-top:auto; display:flex; align-items:center; gap:10px; background:#f3f4f6; border:1px solid #e5e7eb; padding:10px; border-radius:12px; }
+.fiq-user-avatar { width:32px; height:32px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#e5e7eb; color:#374151; font-weight:700; }
+.fiq-user-meta .muted { font-size:12px; color:#6b7280; }
+
+/* Lead name links */
+.lead-name-link { color: inherit; text-decoration: none; }
+.lead-name-link:hover { color:#4f46e5; text-decoration: underline; }
+
+/* Form sizing fixes */
+select.status-select { width:auto; min-width:0; max-width:none; font-size: 14px; white-space: nowrap; display:inline-block; }
+select.anrede-select { width:auto; min-width:0; max-width:none; font-size: 14px; white-space: nowrap; display:inline-block; }
+.lead-name-link strong { font-size: 16px; }
+
+/* Grid cards */
+.lead-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
+.lead-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.10); }
+.lead-card .title { font-weight:700; font-size:16px; }
+.lead-card .muted { color:#6b7280; font-size:12px; }
+.lead-card .actions .iconbtn { width: 36px; height: 36px; }
+
+/* View toggle compact look */
+.view-toggle { display:inline-flex; align-items:center; gap:2px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:10px; padding:2px; }
+.view-toggle .toggle-btn { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+
+/* Slide-in Lead Drawer */
+.fiq-drawer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: none; z-index: 1000; }
+.fiq-drawer-backdrop.open { display: block; }
+.fiq-drawer { position: absolute; top: 0; right: 0; height: 100%; width: min(760px, 100%); background: #fff; box-shadow: -8px 0 24px rgba(0,0,0,.12);
+  transform: translateX(100%); transition: transform .25s ease; overflow-y: auto; padding: 24px; }
+.fiq-drawer.open { transform: translateX(0); }
+.fiq-drawer .drawer-close { position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 20px; cursor: pointer; color:#6b7280; }
+.fiq-drawer .drawer-close:hover { color:#111827; }
