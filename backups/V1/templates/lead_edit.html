@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Lead bearbeiten</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#F5F8FA;color:#33475B}
+    .container{max-width:900px;margin:0 auto;padding:24px}
+    .card{background:#fff;border:1px solid #CBD6E2;border-radius:6px;padding:16px 20px}
+    label{display:block;margin-top:10px}
+    input,select,textarea{width:100%;padding:8px;margin-top:4px}
+    .btn{margin-top:16px;padding:10px 14px;border:1px solid #CBD6E2;border-radius:6px;background:#fff;cursor:pointer}
+    .primary{background:#FF7A59;border-color:#FF7A59;color:#fff}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Lead bearbeiten</h1>
+  <div class="card">
+    <form action="/leads/{{ lead.id }}/edit" method="post">
+      <label>Anrede
+        <select name="anrede">
+          <option value="-" {% if lead.anrede == '-' or not lead.anrede %}selected{% endif %}>-</option>
+          <option value="Herr" {% if lead.anrede == 'Herr' %}selected{% endif %}>Herr</option>
+          <option value="Frau" {% if lead.anrede == 'Frau' %}selected{% endif %}>Frau</option>
+        </select>
+      </label>
+      <label>Vorname <input type="text" name="vorname" value="{{ lead.vorname or '' }}"></label>
+      <label>Nachname* <input type="text" name="nachname" required value="{{ lead.nachname or '' }}"></label>
+      <label>E-Mail <input type="email" name="email" value="{{ lead.email or '' }}"></label>
+      <label>Telefon <input type="text" name="telefon" value="{{ lead.telefon or '' }}"></label>
+      <label>Kundentyp* <input type="text" name="kundentyp" required value="{{ lead.kundentyp or '' }}"></label>
+      <label>Lead-Art* <input type="text" name="lead_art" required value="{{ lead.lead_art or '' }}"></label>
+      <label>Notizen <textarea name="notes">{{ lead.notes or '' }}</textarea></label>
+      <button type="submit" class="btn primary">Speichern</button>
+      <a href="/" class="btn">Abbrechen</a>
+    </form>
+  </div>
+</div>
+</body>
+</html>

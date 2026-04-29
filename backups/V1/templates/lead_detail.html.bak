@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lead Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/flowiq.css">
+</head>
+<body>
+<div class="fiq-layout">
+  {% include '_sidebar.html' %}
+  <div class="fiq-content">
+    <div class="card">
+      <div class="toolbar">
+        <h1>Lead Details</h1>
+        <span class="small" style="margin-left:6px;color:#64748B">v{{ app_version }}</span>
+        <a class="btn" href="/">Zur Ãœbersicht</a>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+        <div>
+          <h2>Stammdaten</h2>
+          <div class="small">Anrede</div>
+          <div><strong>{{ lead.anrede or '-' }}</strong></div>
+          <div class="small" style="margin-top:8px;">Name</div>
+          <div><strong>{{ lead.vorname or '' }} {{ lead.nachname or '' }}</strong></div>
+          <div class="small" style="margin-top:8px;">E-Mail</div>
+          <div>{{ lead.email or '-' }}</div>
+          <div class="small" style="margin-top:8px;">Telefon</div>
+          <div>{{ lead.telefon or '-' }}</div>
+          <div class="small" style="margin-top:8px;">Status</div>
+          <div>{{ lead.status or '-' }}</div>
+        </div>
+        <div>
+          <h2>Aktionen</h2>
+          <div class="actions-bar">
+            <a class="btn" href="/leads/{{ lead.id }}/edit">Bearbeiten</a>
+            <a class="btn" href="/leads/{{ lead.id }}/print" target="_blank" rel="noopener">PDF/Print</a>
+            <form action="/leads/{{ lead.id }}/notify/email" method="post" style="display:inline;">
+              <input type="hidden" name="redirect_url" value="/leads/{{ lead.id }}/detail">
+              <button class="btn" type="submit">E-Mail senden</button>
+            </form>
+            <form action="/leads/{{ lead.id }}/delete" method="post" style="display:inline;" onsubmit="return confirm('Lead wirklich lÃ¶schen?')">
+              <button class="btn btn-delete" type="submit">LÃ¶schen</button>
+            </form>
+          </div>
+          <h2 style="margin-top:16px;">Notizen</h2>
+          <div class="card" style="padding:12px; white-space:pre-wrap;">{{ lead.notes or '' }}</div>
+
+          <h2 style="margin-top:16px;">Versionen</h2>
+          {% if versions and versions|length %}
+          <div class="list">
+            {% for v in versions %}
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <div>
+                <strong>Version {{ v.version }}</strong>
+                <div class="small">{{ v.changed_at }}</div>
+              </div>
+              <form action="/leads/{{ lead.id }}/rollback" method="post" onsubmit="return confirm('Auf Version {{ v.version }} zuruecksetzen?');">
+                <input type="hidden" name="version" value="{{ v.version }}">
+                <input type="hidden" name="redirect_url" value="/leads/{{ lead.id }}/detail">
+                <button class="btn" type="submit">Wiederherstellen</button>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="small">Keine Versionen vorhanden.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
